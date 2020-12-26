@@ -3,17 +3,15 @@ on: [push]
 
 jobs:
   push_to_ghcr:
-    name: Push Docker image to GitHub Container Registry
+    name: Push Docker image to ghcr
     runs-on: ubuntu-latest
     steps:
       - name: Check out the repo
         uses: actions/checkout@v2
-      - name: Push
-        uses: docker/build-push-action@v1
+      - name: Login to ghcr
+        if: github.event_name != 'pull_request'
         with:
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-          registry: docker.pkg.github.com
-          repository: mikemoraned/rust_multi_arch
-          tag_with_ref: true
-  
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.ghcr_TOKEN }}
+
