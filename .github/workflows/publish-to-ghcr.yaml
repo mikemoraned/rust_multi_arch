@@ -21,7 +21,8 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           load: true
-          tags: ghcr.io/mikemoraned/rust_multi_arch:0.2.0
+          platforms: linux/arm64,linux/amd64
+          tags: ghcr.io/mikemoraned/rust_multi_arch:0.2.1
       
       - name: Push
-        run: docker push ghcr.io/mikemoraned/rust_multi_arch:0.2.0  
+        run: docker push ghcr.io/mikemoraned/rust_multi_arch:0.2.1
