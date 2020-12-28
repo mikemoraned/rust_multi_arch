@@ -18,6 +18,8 @@ jobs:
             echo ::set-output name=version::${GITHUB_REF#refs/tags/v}
           elif [[ $GITHUB_REF == refs/heads/master ]]; then
             echo ::set-output name=category::ignore
+          elif [[ $GITHUB_REF == refs/heads/main ]]; then
+            echo ::set-output name=category::ignore
           elif [[ $GITHUB_REF == refs/heads/* ]]; then
             echo ::set-output name=category::publish
             echo ::set-output name=kind::branch-build
