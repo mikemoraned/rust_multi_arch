@@ -21,7 +21,7 @@ jobs:
           elif [[ $GITHUB_REF == refs/heads/* ]]; then
             echo ::set-output name=category::publish
             BRANCH_NAME=${GITHUB_REF#refs/heads/}
-            VERSION_SAFE_NAME=${BRANCH_NAME/\//-/}
+            VERSION_SAFE_NAME=${BRANCH_NAME/\//-}
             echo ::set-output name=version::${VERSION_SAFE_NAME}
             echo ::set-output name=kind::branch-build
           else
