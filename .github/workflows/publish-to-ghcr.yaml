@@ -1,5 +1,5 @@
 name: Publish to GitHub Container Registry
-on: [push]
+on: [push, workflow_dispatch]
 
 jobs:
   push_to_ghcr:
@@ -57,7 +57,16 @@ jobs:
       - name: Setup Buildx
         if: steps.prepare.outputs.category == 'publish'
         uses: docker/setup-buildx-action@v1
-    
+        
+      - name: Cache Docker layers
+        if: steps.prepare.outputs.category == 'publish'
+        uses: actions/cache@v2
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-
+      
       - name: Build and Push
         if: steps.prepare.outputs.category == 'publish'
         id: docker_build
@@ -67,3 +76,6 @@ jobs:
           platforms: linux/arm64,linux/amd64
           tags: "${{ steps.prepare.outputs.docker_image }}:${{ steps.prepare.outputs.version }}"
           labels: "KIND=${{ steps.prepare.outputs.kind }},BUILD_DATE=${{ steps.prepare.outputs.build_date }},VCS_REF=${GITHUB_SHA}"
+          cache-from: type=local,src=/tmp/.buildx-cache
+          cache-to: type=local,dest=/tmp/.buildx-cache
+      
