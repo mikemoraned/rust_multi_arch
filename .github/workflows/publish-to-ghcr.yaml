@@ -14,16 +14,16 @@ jobs:
         run: |
           if [[ $GITHUB_REF == refs/tags/* ]]; then
             echo ::set-output name=category::publish
-            echo ::set-output name=version::${GITHUB_REF#refs/tags/v}
             echo ::set-output name=kind::release
+            echo ::set-output name=version::${GITHUB_REF#refs/tags/v}
           elif [[ $GITHUB_REF == refs/heads/master ]]; then
             echo ::set-output name=category::ignore
           elif [[ $GITHUB_REF == refs/heads/* ]]; then
             echo ::set-output name=category::publish
-            BRANCH_NAME=${GITHUB_REF#refs/heads/}
-            VERSION_SAFE_NAME=${BRANCH_NAME/\//-}
-            echo ::set-output name=version::${VERSION_SAFE_NAME}
             echo ::set-output name=kind::branch-build
+            BRANCH_NAME=${GITHUB_REF#refs/heads/}
+            VERSION_SAFE_BRANCH_NAME=${BRANCH_NAME/\//-}
+            echo ::set-output name=version::${VERSION_SAFE_BRANCH_NAME}-${GITHUB_RUN_NUMBER}
           else
             echo ::set-output name=category::ignore
           fi
