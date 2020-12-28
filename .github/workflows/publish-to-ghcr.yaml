@@ -15,11 +15,13 @@ jobs:
           if [[ $GITHUB_REF == refs/tags/* ]]; then
             echo ::set-output name=category::publish
             echo ::set-output name=version::${GITHUB_REF#refs/tags/v}
+            echo ::set-output name=kind::release
           elif [[ $GITHUB_REF == refs/heads/master ]]; then
             echo ::set-output name=category::ignore
           elif [[ $GITHUB_REF == refs/heads/* ]]; then
             echo ::set-output name=category::publish
             echo ::set-output name=version::${GITHUB_REF#refs/heads/}
+            echo ::set-output name=kind::branch-build
           else
             echo ::set-output name=category::ignore
           fi
@@ -32,6 +34,7 @@ jobs:
           echo git_sha=$GITHUB_SHA
           echo category=${{ steps.prepare.outputs.category }}
           echo version=${{ steps.prepare.outputs.version }}
+          echo kind=${{ steps.prepare.outputs.kind }}
           echo date=${{ steps.prepare.outputs.build_date }}
           echo docker_image=${{ steps.prepare.outputs.docker_image }}
 
@@ -54,4 +57,5 @@ jobs:
         with:
           push: true
           platforms: linux/arm64,linux/amd64
-          tags: ghcr.io/mikemoraned/rust_multi_arch:0.2.1
+          tags: "${{ steps.prepare.outputs.docker_image }}:${{ steps.prepare.outputs.version }}"
+          labels: "KIND=${{ steps.prepare.outputs.kind }},BUILD_DATE=${{ steps.prepare.outputs.build_date }},VCS_REF=${GITHUB_SHA}"
